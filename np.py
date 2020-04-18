@@ -3,6 +3,7 @@
 import hexchat
 import requests
 import html
+import sys
 
 # http://stackoverflow.com/a/10077069 (fixed for python 3)
 from collections import defaultdict
@@ -39,22 +40,36 @@ def np_cb(word, word_eol, userdata):
 		f = open("C:\\Users\\Albert\\AppData\\Roaming\\foobar2000\\np.txt", "r").read()
 		cmd = "me " + f
 	else:
-		r = requests.get("http://localhost:8080/requests/status.xml", auth=("", "asdf"))
+		r = requests.get("http://localhost:8080/requests/status.xml", auth=("", "asdf27"))
 		e = ET.XML(r.text)
 		xml = etree_to_dict(e)
 
 		infos = {}
 		xmlinfo = xml["root"]["information"]["category"][0]["info"]
-		
+
+		def lookup(info, field):
+			try:
+				if isinstance(info, dict) and (field not in info):
+					text = ''
+				else:
+					text = info[field]
+			except TypeError:
+				text = info[0][field]
+			except KeyError:
+				try:
+					text = info[0][field]
+				except KeyError:
+					print('info=', info, file=sys.stderr)
+					assert 0
+			return text
+
+
 		if len(xmlinfo) > 2:
 			for info in xmlinfo:
-				infos[info["@name"]] = info["#text"]
+				infos[lookup(info, "@name")] = lookup(info, "#text")
 		else:
-			try:
-				infos["filename"] = xmlinfo["#text"]
-			except TypeError:
-				infos["filename"] = xmlinfo[0]["#text"]
-				
+			infos["filename"] = lookup(xmlinfo, "#text")
+
 		try:
 			album = infos["album"]
 			artist = infos["artist"]
@@ -73,7 +88,7 @@ def np_cb(word, word_eol, userdata):
 			except:
 				filename = infos["filename"]
 				cmd = "me is now playing: \002\00311{}\017 [\00308{}\017/\002\00307{}\017]".format(filename, time, length)
-		
+
 	hexchat.command(html.unescape(cmd))
 	return hexchat.EAT_ALL
 
