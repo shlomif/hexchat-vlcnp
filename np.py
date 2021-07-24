@@ -45,7 +45,14 @@ def np_cb(word, word_eol, userdata):
 		xml = etree_to_dict(e)
 
 		infos = {}
-		xmlinfo = xml["root"]["information"]["category"][0]["info"]
+		try:
+			xmlinfo = xml["root"]["information"]["category"][0]["info"]
+		except KeyError:
+			# filename = infos["filename"]
+			cmd = "me is now playing a unknown song"
+			hexchat.command(html.unescape(cmd))
+			return hexchat.EAT_ALL
+
 
 		def lookup(info, field):
 			try:
