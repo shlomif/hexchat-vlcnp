@@ -1,13 +1,16 @@
 # coding=utf-8
 
+import configparser
 import hexchat
 import requests
 import html
+import os
 import sys
 
 # http://stackoverflow.com/a/10077069 (fixed for python 3)
 from collections import defaultdict
 from xml.etree import cElementTree as ET
+
 
 def etree_to_dict(t):
 	d = {t.tag: {} if t.attrib else None}
@@ -34,13 +37,19 @@ __module_name__ = "vlcnp"
 __module_author__ = "albert--"
 __module_version__ = "1.0"
 __module_description__ = "HexChat 'now playing' script for VLC media player"
+config = configparser.ConfigParser()
+try:
+	config.read(os.getenv('HOME') + '/.config/nowplay.ini')
+	password = config['DEFAULT']['password']
+except:
+	password = 'password'
 
 def np_cb(word, word_eol, userdata):
 	if len(word) > 1:
 		f = open("C:\\Users\\Albert\\AppData\\Roaming\\foobar2000\\np.txt", "r").read()
 		cmd = "me " + f
 	else:
-		r = requests.get("http://localhost:8080/requests/status.xml", auth=("", "asdf27"))
+		r = requests.get("http://localhost:8080/requests/status.xml", auth=("", password))
 		e = ET.XML(r.text)
 		xml = etree_to_dict(e)
 
