@@ -103,7 +103,7 @@ def np_cb(word, word_eol, userdata):
 				cmd = "me is now playing: \002\00311{}\017 [\00308{}\017/\002\00307{}\017]".format(title, time, length)
 			except:
 				filename = infos["filename"]
-				cmd = "me is now playing: \002\00311{}\017 [\00308{}\017/\002\00307{}\017]".format(filename.encode(encoding='iso8859-1').decode(encoding='utf-8'), time, length)
+				cmd = "me is now playing: \002\00311{}\017 [{}/\002\00307{}\017]".format(filename.encode(encoding='iso8859-1').decode(encoding='utf-8'), time, length)
 
 	hexchat.command(html.unescape(cmd))
 	return hexchat.EAT_ALL
