@@ -100,7 +100,9 @@ def np_cb(word, word_eol, userdata):
 			length = "%02d:%02d" % (m, s)
 			try:
 				title = infos["title"]
-				cmd = "me is now playing: \002\00311{}\017 [\00308{}\017/\002\00307{}\017]".format(title, time, length)
+                # Avoid intrusive color.
+				# cmd = "me is now playing: \002\00311{}\017 [\00308{}\017/\002\00307{}\017]".format(title, time, length)
+				cmd = "me is now playing: \002\00311{}\017 [{}/\002\00307{}\017]".format(title, time, length)
 			except:
 				filename = infos["filename"]
 				cmd = "me is now playing: \002\00311{}\017 [{}/\002\00307{}\017]".format(filename.encode(encoding='iso8859-1').decode(encoding='utf-8'), time, length)
